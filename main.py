@@ -2,6 +2,7 @@ import tkinter as tk
 from tkinter import ttk
 import cv2 as cv
 import numpy as np
+import sys
 
 class App(ttk.Frame):
     def __init__(self, master=None):
@@ -18,19 +19,29 @@ class App(ttk.Frame):
         
     def start_camera(self):
         cap = cv.VideoCapture(1)
+
+        cascPath = sys.argv[1]
+        faceCascade = cv.CascadeClassifier(cascPath)
+
         if not cap.isOpened():
             print("Cannot open camera")
             exit()
         while True:
-            # Capture frame-by-frame
+           
             ret, frame = cap.read()
-            # if frame is read correctly ret is True
+            
             if not ret:
                 print("Can't receive frame (stream end?). Exiting ...")
                 break
-            # Our operations on the frame come here
+            faces = faceCascade.detectMultiScale(
+            gray,
+            scaleFactor=1.1,
+            minNeighbors=5,
+            minSize=(30, 30),
+            flags=cv.CV_HAAR_SCALE_IMAGE
+            )
             gray = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
-            # Display the resulting frame
+            
             cv.imshow('frame', gray)
             if cv.waitKey(1) == ord('q'):
                 break
