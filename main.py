@@ -1,6 +1,7 @@
 import tkinter as tk
 from tkinter import ttk
-import cv2
+import cv2 as cv
+import numpy as np
 
 class App(ttk.Frame):
     def __init__(self, master=None):
@@ -16,18 +17,23 @@ class App(ttk.Frame):
         self.quit.pack()
         
     def start_camera(self):
-        cap = cv2.VideoCapture(0, cv2.CAP_V4L)
-                
+        cap = cv.VideoCapture(1)
+        if not cap.isOpened():
+            print("Cannot open camera")
+            exit()
         while True:
+            # Capture frame-by-frame
             ret, frame = cap.read()
-
-            cv2.imshow('frame',frame)
-            
-            if cv2.waitKey(1) & 0xFF == ord('q'):
+            # if frame is read correctly ret is True
+            if not ret:
+                print("Can't receive frame (stream end?). Exiting ...")
                 break
-        
-        cap.release()
-        cv2.destroyAllWindows()
+            # Our operations on the frame come here
+            gray = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
+            # Display the resulting frame
+            cv.imshow('frame', gray)
+            if cv.waitKey(1) == ord('q'):
+                break
 
 root = tk.Tk()
 app = App(master=root)
