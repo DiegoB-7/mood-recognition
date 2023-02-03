@@ -18,7 +18,7 @@ class App(ttk.Frame):
         self.quit.pack()
         
     def start_camera(self):
-        cascPath = sys.argv[1]
+        cascPath = sys.argv[0]
         faceCascade = cv2.CascadeClassifier(cascPath)
 
         video_capture = cv2.VideoCapture(1) 
