@@ -1,6 +1,6 @@
 import tkinter as tk
 from tkinter import ttk
-import cv2 as cv
+import cv2 
 import numpy as np
 import sys
 
@@ -18,32 +18,33 @@ class App(ttk.Frame):
         self.quit.pack()
         
     def start_camera(self):
-        cap = cv.VideoCapture(1)
-
         cascPath = sys.argv[1]
-        faceCascade = cv.CascadeClassifier(cascPath)
+        faceCascade = cv2.CascadeClassifier(cascPath)
 
-        if not cap.isOpened():
-            print("Cannot open camera")
-            exit()
+        video_capture = cv2.VideoCapture(1) 
+
         while True:
-           
-            ret, frame = cap.read()
-            
-            if not ret:
-                print("Can't receive frame (stream end?). Exiting ...")
-                break
+        # Capture frame-by-frame
+            ret, frame = video_capture.read()
+
+            gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+
             faces = faceCascade.detectMultiScale(
-            gray,
-            scaleFactor=1.1,
-            minNeighbors=5,
-            minSize=(30, 30),
-            flags=cv.CV_HAAR_SCALE_IMAGE
-            )
-            gray = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
-            
-            cv.imshow('frame', gray)
-            if cv.waitKey(1) == ord('q'):
+        gray,
+        scaleFactor=1.1,
+        minNeighbors=5,
+        minSize=(30, 30),
+        flags=cv2.cv.CV_HAAR_SCALE_IMAGE
+    )
+
+    # Draw a rectangle around the faces
+            for (x, y, w, h) in faces:
+                cv2.rectangle(frame, (x, y), (x+w, y+h), (0, 255, 0), 2)
+
+    # Display the resulting frame
+            cv2.imshow('Video', frame)
+
+            if cv2.waitKey(1) & 0xFF == ord('q'):
                 break
 
 root = tk.Tk()
